@@ -33,6 +33,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String newValue = "Kelvin";
   double _result = 0;
   String changeValue = "";
+  double _currentSliderValue = 0;
 
   List<String> listViewItem = <String>[];
 
@@ -42,17 +43,36 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
   void perhitunganSuhu() {
     setState(() {
-      _inputuser = double.parse(inputController.text);
+      _inputuser = double.parse(_currentSliderValue.toString());
 
       if (newValue == "Kelvin") {
         _result = _inputuser + 273;
-        
+        listViewItem.add("Hasil Nilai Dari Kelvin:      " + _result.toString());
       } else {
         _result = (4 / 5) * _inputuser;
         listViewItem.add("Hasil Nilai Dari Reamur:    " + _result.toString());
       }
-      listViewItem.add("Hasil Nilai Dari Kelvin:      " + _result.toString());
     });
+  }
+
+  input() {
+    return Slider(
+      value: _currentSliderValue,
+      max: 100,
+      divisions: 100,
+      label: _currentSliderValue.round().toString(),
+      onChanged: (double value) {
+        setState(() {
+          _currentSliderValue = value;
+        });
+      },
+      onChangeEnd: (double value) {
+        setState(() {
+          _currentSliderValue = value;
+          perhitunganSuhu();
+        });
+      },
+    );
   }
 
   void _incrementCounter() {
@@ -71,9 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: <Widget>[
             Container(
-              child: Input(
-                myController: inputController,
-              ),
+              child: input(),
             ),
             Container(
               child: DropdownButton<String>(
@@ -100,8 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 konvertHandler: perhitunganSuhu,
               )),
             ),
-            Container(
-              child: Text("Riwayat Konversi")),
+            Container(child: Text("Riwayat Konversi")),
             Expanded(
                 child: ListView(
               children: listViewItem.map((String value) {
